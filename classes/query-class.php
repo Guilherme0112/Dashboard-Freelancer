@@ -17,7 +17,7 @@
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td> Sem dados por agora</td>
+                            <td> Sem dados por agora </td>
                             <td></td>
                             <td></td>
                             <td></td>
