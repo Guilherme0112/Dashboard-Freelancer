@@ -12,18 +12,11 @@
             $html = null;
             $reads = $this->conexao->query("SELECT *, date_format(prazo, '%d/%m%Y') FROM clientes");
             if($reads->rowCount() == 0){
-                return "<tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td> Sem dados por agora </td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>";
+                return "Sem dados por agora";
             } else {
+                $dados = array();
                 while($linhas = $reads->fetch(PDO::FETCH_ASSOC)){
+
                     $id = $linhas['idclientes'];
                     $nome = $linhas['nomeCliente'];
                     $valor = number_format($valor = $linhas['valor'], 2, ',', '.');
@@ -31,31 +24,16 @@
                     $projeto = $linhas['projeto'];
                     $status = $linhas['status'];
 
-                    $html .= "<tr id='column'>
-                                <td>$id</td>
-                                <td>$nome</td>
-                                <td>R$$valor</td>
-                                <td>$prazo</td>
-                                <td>$projeto</td>
-                                <td>$status</td>
-                                <input style='display:none;' id='id' type='text' value='$id'>
-                                <td>
-                                    <a href='delete.php?id=$id' class='btn btn-danger'>
-                                        <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-trash-fill' viewBox='0 0 16 16'>
-                                            <path d='M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0'/>
-                                        </svg>
-                                    </a>
-                                </td>
-                                <td>
-                                    <a href='editar.php?id=$id' class='btn btn-primary'>
-                                        <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-pencil-fill' viewBox='0 0 16 16'>
-                                            <path d='M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z'/>
-                                        </svg>
-                                    </a>
-                                </td>
-                            </tr>";
-                    }
-                return $html;
+                    $dados[] = array(
+                        'id' => $id,
+                        'nome' => $nome,
+                        'valor' => $valor,
+                        'prazo' => $prazo,
+                        'projeto' => $projeto,
+                        'status' => $status
+                    );
+                }
+                return $dados;
             }
         }
         public function totalGanho(){
@@ -82,7 +60,6 @@
                 }
             }
         }
-        
         public function valueStatus(){
             $query = $this->conexao->query("SELECT valor FROM clientes WHERE status = 'Em Andamento'");
             if($query->rowCount() == 0){
@@ -96,6 +73,44 @@
                 }
                 return "R$".number_format($total, 2, ',', '.');
             }
+        }
+        public function prazo(){
+
+            date_default_timezone_set('America/Sao_Paulo');
+            $dataAtual = new DateTime();
+            $dataAtual->format('Y-m-d');
+            $dataAtual->modify('+2 days');
+            $prazo = $dataAtual->format('Y-m-d');
+
+            // convert to string for query 
+
+            $dataAtual = $dataAtual->format('Y-m-d');
+            $prazo = $prazo;
+
+            $queryPrazo = $this->conexao->query("SELECT *, date_format(prazo, '%d/%m/%Y') FROM clientes WHERE prazo BETWEEN '$dataAtual' AND '$prazo'");
+            if($queryPrazo->rowCount() == 0){
+                return "Sem dados por agora";
+            } else {
+                $pertoDoPrazo = array();
+                while($i = $queryPrazo->fetch(PDO::FETCH_ASSOC)){
+                    $id = $i['idclientes'];
+                    $nome = $i['nomeCliente'];
+                    $valor = number_format($valor = $i['valor'], 2, ',', '.');
+                    $prazo = $i["date_format(prazo, '%d/%m/%Y')"];
+                    $projeto = $i['projeto'];
+                    $status = $i['status'];
+
+                    $pertoDoPrazo[] = array(
+                        'id' => $id,
+                        'nome' => $nome,
+                        'valor' => $valor,
+                        'prazo' => $prazo,
+                        'projeto' => $projeto,
+                        'status' => $status
+                    );
+                }
+            }
+            return $pertoDoPrazo;
         }
     }
     class editDado extends Conexao{
