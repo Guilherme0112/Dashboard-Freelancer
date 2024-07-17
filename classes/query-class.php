@@ -47,7 +47,6 @@
             } else {
                 $dados = array();
                 while($linhas = $prazos->fetch(PDO::FETCH_ASSOC)){
-
                     $id = $linhas['idclientes'];
                     $nome = $linhas['nomeCliente'];
                     $valor = number_format($valor = $linhas['valor'], 2, ',', '.');

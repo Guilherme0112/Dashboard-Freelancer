@@ -38,9 +38,6 @@
 </head>
 
 <body>
-    <header>
-
-    </header>
     <main>
         <form action="<?php $_SERVER['PHP_SELF'] ?>" method="post">
             <label for="cliente">Nome do cliente</label>
@@ -53,8 +50,8 @@
             <div class="input-group">
                 <textarea class="form-control" aria-label="With textarea" name="projeto" placeholder="Fale sobre o projeto"><?php echo $projeto ?></textarea>
             </div>
-            <input type="submit" value="Salvar" name='submit' class="btn btn-success btn-criar">
-            <a href="index.php" class="btn btn-danger btn-criar">Voltar</a>
+            <input type="submit" value="Salvar" name='submit' class="btn btn-success btn-editar">
+            <a href="index.php" class="btn btn-danger btn-editar">Voltar</a>
         </form>
     </main>
 </body>
