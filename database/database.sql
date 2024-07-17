@@ -33,7 +33,7 @@ CREATE TABLE `clientes` (
   `dataDeRegistro` timestamp NOT NULL DEFAULT current_timestamp(),
   `status` varchar(20) DEFAULT 'Em Andamento',
   PRIMARY KEY (`idclientes`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -54,4 +54,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-07-10 22:20:26
+-- Dump completed on 2024-07-17 12:44:54
