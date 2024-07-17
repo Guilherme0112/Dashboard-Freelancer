@@ -9,8 +9,7 @@
             }
         }
         public function read(){
-            $html = null;
-            $reads = $this->conexao->query("SELECT *, date_format(prazo, '%d/%m%Y') FROM clientes");
+            $reads = $this->conexao->query("SELECT *, date_format(prazo, '%d/%m/%Y') FROM clientes WHERE status = 'Em andamento'");
             if($reads->rowCount() == 0){
                 return "Sem dados por agora";
             } else {
@@ -20,7 +19,66 @@
                     $id = $linhas['idclientes'];
                     $nome = $linhas['nomeCliente'];
                     $valor = number_format($valor = $linhas['valor'], 2, ',', '.');
-                    $prazo = $linhas["date_format(prazo, '%d/%m%Y')"];
+                    $prazo = $linhas["date_format(prazo, '%d/%m/%Y')"];
+                    $projeto = $linhas['projeto'];
+                    $status = $linhas['status'];
+
+                    $dados[] = array(
+                        'id' => $id,
+                        'nome' => $nome,
+                        'valor' => $valor,
+                        'prazo' => $prazo,
+                        'projeto' => $projeto,
+                        'status' => $status
+                    );
+                }
+                return $dados;
+            }
+        }
+        public function prazoEncerrado(){
+            date_default_timezone_set('America/Sao_Paulo');
+            $dataAtual = new DateTime();
+            $dataAtual->format('Y-m-d');
+            $dataAtual = $dataAtual->format('Y-m-d');
+
+            $prazos = $this->conexao->query("SELECT *, date_format(prazo, '%d/%m/%Y') FROM clientes WHERE status != 'Concluído' AND prazo < '$dataAtual'");
+            if($prazos->rowCount() == 0){
+                return "Sem dados por agora";
+            } else {
+                $dados = array();
+                while($linhas = $prazos->fetch(PDO::FETCH_ASSOC)){
+
+                    $id = $linhas['idclientes'];
+                    $nome = $linhas['nomeCliente'];
+                    $valor = number_format($valor = $linhas['valor'], 2, ',', '.');
+                    $prazo = $linhas["date_format(prazo, '%d/%m/%Y')"];
+                    $projeto = $linhas['projeto'];
+                    $status = $linhas['status'];
+
+                    $dados[] = array(
+                        'id' => $id,
+                        'nome' => $nome,
+                        'valor' => $valor,
+                        'prazo' => $prazo,
+                        'projeto' => $projeto,
+                        'status' => $status
+                    );
+                }
+                return $dados;
+            }
+        }
+        public function completado(){
+            $prazos = $this->conexao->query("SELECT *, date_format(prazo, '%d/%m/%Y') FROM clientes WHERE status = 'Concluído'");
+            if($prazos->rowCount() == 0){
+                return "Sem dados por agora";
+            } else {
+                $dados = array();
+                while($linhas = $prazos->fetch(PDO::FETCH_ASSOC)){
+
+                    $id = $linhas['idclientes'];
+                    $nome = $linhas['nomeCliente'];
+                    $valor = number_format($valor = $linhas['valor'], 2, ',', '.');
+                    $prazo = $linhas["date_format(prazo, '%d/%m/%Y')"];
                     $projeto = $linhas['projeto'];
                     $status = $linhas['status'];
 
@@ -56,7 +114,7 @@
             } else {
                 $del = $this->conexao->query("DELETE FROM clientes WHERE idclientes = $id");
                 if($del){
-                    header('location: index.php');
+                    header('location: ../index.php');
                 }
             }
         }
@@ -87,7 +145,7 @@
             $dataAtual = $dataAtual->format('Y-m-d');
             $prazo = $prazo;
 
-            $queryPrazo = $this->conexao->query("SELECT *, date_format(prazo, '%d/%m/%Y') FROM clientes WHERE prazo BETWEEN '$dataAtual' AND '$prazo'");
+            $queryPrazo = $this->conexao->query("SELECT *, date_format(prazo, '%d/%m/%Y') FROM clientes WHERE prazo BETWEEN '$dataAtual' AND '$prazo' AND status = 'Em Andamento'");
             if($queryPrazo->rowCount() == 0){
                 return "Sem dados por agora";
             } else {
@@ -139,6 +197,15 @@
                 $update = $this->conexao->query("UPDATE clientes SET nomeCliente = '$nome', projeto='$projeto', valor=$valor, prazo='$prazo' WHERE idclientes = $id");
                 if($update){
                     header('location: index.php');
+                }
+            }
+        }
+        public function completed($id){
+            $queryVerification = $this->conexao->query("SELECT * FROM clientes WHERE idclientes = $id");
+            if($queryVerification->rowCount() >= 1){
+                $completed = $this->conexao->query("UPDATE clientes SET status = 'Concluído' WHERE idclientes = $id");
+                if($completed){
+                    header('location: ../index.php');
                 }
             }
         }
