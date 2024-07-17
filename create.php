@@ -51,8 +51,8 @@
             <div class="input-group">
                 <textarea class="form-control" aria-label="With textarea" name="projeto" placeholder="Fale sobre o projeto"></textarea>
             </div>
-            <input type="submit" value="Registrar" name='submit' class="btn btn-success btn-criar">
-            <a href="index.php" class="btn btn-danger btn-criar">Voltar</a>
+            <input type="submit" value="Registrar" name='submit' class="btn btn-success btn-editar">
+            <a href="index.php" class="btn btn-danger btn-editar">Voltar</a>
         </form>
     </main>
 </body>
